@@ -1,210 +1,117 @@
 #include <iostream>
 #include <vector>
-
-
 using namespace std;
-
-int map[9][6] = {
-	{0,},
-	{0,2,4,6,8,10},
-	{10,12,14,16,18,20},
-	{10,13,16,19,25},
-	{20,22,24,26,28,30},
-	{20,22,24,25},
-	{25,30,35,40,0},
-	{30,32,34,36,38,0},
-	{30,28,27,26,25}
-};
-
-int mapLen[9] = { 0,6,6,5,6,4,5,6,5 };
-int link(int target,int state)
-{
-	if (target == 6 || target == 7)
-		return target;
-	if (target == 1)
-	{
-		if (state < 0)
-			return 1;
-		else if(state == 0)
-			return 3;
-		return 2;
-	}
-	if (target == 2)
-	{
-		if (state < 0)
-			return 2;
-		else if(state ==0)
-			return 5;
-		return 4;
-	}
-	if (target == 3)
-	{
-		if (state < 0)
-			return 3;
-		return 6;
-	}
-	if (target == 4)
-	{
-		if (state < 0)
-			return 4;
-		else if (state ==0)
-			return 8;
-		return 7;
-	}
-	if (target == 5)
-	{
-		if (state < 0)
-			return 5;
-		return 6;
-	}
-	if (target == 8)
-	{
-		if (state < 0)
-			return 8;
-		return 6;
-	}
-}
-
-struct mal {
-	int x, y;
-	mal()
-	{
-		x = 0;
-		y = 1;
-	}
-	int move(int diceVal)
-	{
-		int diff = diceVal+x - (mapLen[y]-1);
-		int nLink = link(y, diff);
-		if (diff < 0)
-			x = x + diceVal;
-		else {
-			if (nLink == 6 || nLink == 7)
-			{
-				if (y != nLink)
-					x = diff;
-				else
-					x = x + diceVal;
-				if (x >= mapLen[nLink]-1)				
-					return -1;								
-			}			
-			x = diff;
-			y = nLink;
-		}
-		return map[y][x];		
-	}
-};
-
-
-mal arr[4];
-vector<int> eachFlow[4];
-bool isOver[4];
-int diceflow[10];
-int answer = 0;
-bool posCheck(int target)
-{
+vector<int> map[8];
+//course,pos
+pair<int, int> malpos[4];
+bool isEnd[4];
+int dice[10];
+bool isvisit(pair<int,int> newPos)
+{	
 	for (int i = 0; i < 4; i++)
 	{
-		if (!isOver[i] && i!=target)
+		if (malpos[i].first !=-1)
 		{
-			if (arr[i].x == arr[target].x && arr[i].y == arr[target].y)
-				return false;
-		}				
+			if (malpos[i] == newPos)
+				return true;
+			if (malpos[i].first == 6 && malpos[i].second == 3 && newPos.first == 7 && newPos.second == 5)
+				return true;
+			if (malpos[i].first == 7 && malpos[i].second == 5 && newPos.first == 6 && newPos.second == 3)
+				return true;
+		}
 	}
-	return true;
+	return false;
 }
-void print()
+pair<int,int> move(int malIdx, int moveCnt)
 {
+	pair<int, int> currentCourseAndPos = malpos[malIdx];
+	int currentCourse = currentCourseAndPos.first;
+	int pos = currentCourseAndPos.second;
+	int courseLen = map[currentCourse].size();	
+	pair<int, int> newCourseAndPos;
+	if (pos + moveCnt == courseLen - 1)
+	{
+		if (currentCourse == 0)
+			newCourseAndPos.first = 1;
+		else if(currentCourse == 1)
+			newCourseAndPos.first = 6;
+		else if (currentCourse == 2)
+			newCourseAndPos.first = 3;
+		else if (currentCourse == 3)
+			newCourseAndPos.first = 6;
+		else if (currentCourse == 4)
+			newCourseAndPos.first = 5;
+		else if (currentCourse == 5)
+			newCourseAndPos.first = 6;
+		else 
+			newCourseAndPos.first = -1;			
+		newCourseAndPos.second = 0;
+	}
+	else if(pos+moveCnt < courseLen-1)
+	{
+		newCourseAndPos.first = currentCourse; newCourseAndPos.second = pos + moveCnt;
+	}
+	else {
+		if (currentCourse == 0)		
+			newCourseAndPos.first = 2; 		
+		else if(currentCourse == 1 || currentCourse == 3 || currentCourse == 5)		
+			newCourseAndPos.first = 6;		
+		else if (currentCourse == 2)		
+			newCourseAndPos.first = 4;		
+		else if (currentCourse == 4)		
+			newCourseAndPos.first = 7;		
+		else
+			newCourseAndPos.first = -1;		
+		newCourseAndPos.second = moveCnt - (courseLen - 1 - pos);
+	}
+	return newCourseAndPos;
+}
+int answer = -1;
+void solve(int tern, int sum)
+{
+	if (tern == 10)
+	{
+		if (answer < sum)
+			answer = sum;
+		return;
+	}
 	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < eachFlow[i].size(); j++)
+		if (!isEnd[i])
 		{
-			cout << eachFlow[i][j] << ",";
+			pair<int, int> save = malpos[i];
+			pair<int, int> newpos = move(i, dice[tern]);
+			if (isvisit(newpos))
+				continue;
+			malpos[i] = newpos;
+			int tempSum = 0;
+			if (newpos.first == -1)
+				isEnd[i] = true;
+			else
+				tempSum = map[newpos.first][newpos.second];			
+			solve(tern + 1, sum + tempSum);
+			if (newpos.first == -1)
+				isEnd[i] = false;
+			malpos[i] = save;
 		}
-		cout << "\n";
 	}
+	return;
 }
-
-
 int main()
 {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
-	
-	
-	//vector<int> temp = { 1,2,3,4,1,2 };
-	//for (int i = 0; i < temp.size(); i++)
-	//{
-	//	cout << "before\n";
-	//	cout << "link : " << arr[0].y << " " << arr[0].x << "\n";
-	//	int ret = arr[0].move(temp[i]);
-	//	cout << "ret : " << ret << "\n";
-	//	cout << "after\n";
-	//	cout << "link : " << arr[0].y << " " << arr[0].x << "\n";
-	//}
-
-
-
-	
-	
-	
+	map[0] = { 0,2,4,6,8,10 };
+	map[1] = { 10,13,16,19,25 };
+	map[2] = { 10,12,14,16,18,20 };
+	map[3] = { 20,22,24,25 };
+	map[4] = { 20,22,24,26,28,30 };
+	map[5] = { 30,28,27,26,25 };
+	map[6] = { 25,30,35,40,0 };
+	map[7] = { 30,32,34,36,38,40,0 };
 	for (int i = 0; i < 10; i++)
-	{		
-		cin >> diceflow[i];		
-	}
-	for (int i = 0; i < 7; i++)
-	{
-		eachFlow[0].clear();
-		for (int i_a = 0; i_a < i + 1; i_a++)
-			eachFlow[0].push_back(diceflow[i_a]);
-		for (int j = i + 1; j < 8; j++)
-		{
-			eachFlow[1].clear();
-			for (int j_a = i+1; j_a < j+1; j_a++)				
-				eachFlow[1].push_back(diceflow[j_a]);
-			for (int k = j + 1; k < 9; k++)
-			{
-				eachFlow[2].clear();
-				for (int k_a = j+1; k_a < k + 1; k_a++)				
-					eachFlow[2].push_back(diceflow[k_a]);
-				eachFlow[3].clear();
-				for (int l_a = k + 1; l_a < 10; l_a++)
-					eachFlow[3].push_back(diceflow[l_a]);
-
-				int sum = 0;
-				bool possible = true;
-				for (int tern = 0; tern < 4; tern++)
-				{
-					arr[tern].y = 1; arr[tern].x = 0;
-					isOver[tern] = false;
-				}
-				cout << "=======\n";
-				print();
-				cout << "======\n";
-				for (int tern = 0; tern < 4; tern++)
-				{
-					for (int flow = 0; flow < eachFlow[tern].size(); flow++)
-					{
-						int ret = arr[tern].move(eachFlow[tern][flow]);
-						if (ret == -1) {
-							isOver[tern] = true;
-							break;
-						}
-							
-						else
-							sum += ret;
-					}
-					cout << tern << " : tern" << " " << sum << "\n";
-					if (!posCheck(tern)) {
-						possible = false;
-						break;
-					}						
-				}
-				if (possible)
-					answer = answer < sum ? sum : answer;
-			}
-		}
-	}
+		cin >> dice[i];
+	solve(0, 0);	
 	cout << answer;
-
+	return 0;
 }

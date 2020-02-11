@@ -27,14 +27,13 @@ int main()
 	}
 	int T; cin >> T;
 	for (int test_case = 0; test_case < T; test_case++)
-	{		
-		cout << "---------------\n";
+	{				
 		int N,theta; cin >> N >> theta;		
 		for (int i = 0; i < N; i++)
 		{			
 			for (int j = 0; j < N; j++)
 				cin >> map[i][j];
-		}
+		}		
 		start_x[0] = N - 1; start_y[0] = 0; start_x[1] = N / 2; start_y[1] = 0; start_x[2] = 0; start_y[2] = 0; start_x[3] = 0; start_y[3] = N / 2;
 		for (int i = 0; i < 4; i++)
 		{
@@ -45,8 +44,10 @@ int main()
 			}			
 		}
 		if (ABS(theta) > 180) {
-			theta = 360 - ABS(theta);
-			theta *= -1;
+			int temp_theta = 360 - ABS(theta);
+			if(theta > 0)
+				temp_theta *= -1;
+			theta = temp_theta;
 		}
 		int q = ABS(theta)/45-1;
 		if (q >= 0) {
@@ -70,14 +71,13 @@ int main()
 					paste_start_x += flow * dx[rem]; paste_start_y += flow * dy[rem];
 				}
 			}
-		}
-		cout << "---------------\n";
+		}		
 		for (int i = 0; i < N; i++)
 		{
 			for (int j = 0; j < N; j++)
 				cout << map[i][j] << " ";
 			cout << "\n";
-		}				
+		}		
 	}
 	return 0;
 }

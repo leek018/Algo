@@ -5,14 +5,16 @@ bool notAllowed[10];
 int isAvailable(int N)
 {	
 	int temp = N;
-	int count = 0;
-	while (temp !=0)
-	{
-		count++;
+	int count = 1;
+	while (true)
+	{		
 		int r = temp % 10;
 		if (notAllowed[r])
 			return -1;
-		temp = N / 10;
+		temp /= 10;
+		if (temp == 0)
+			break;
+		count++;
 	}
 	return count;
 }
@@ -32,7 +34,7 @@ int main()
 	else if (N > 100)
 	{
 		int left = N - 1;
-		int right = N + 1;
+		int right = N;
 		int l_avail = -1;
 		while (left > 100)
 		{
@@ -45,46 +47,41 @@ int main()
 			answer = l_avail + N - left;
 		answer = answer > N - 100 ? N - 100 : answer;
 		int r_avail = -1;
-		while (right < 500000)
+		while (right < 1000000)
 		{
 			r_avail = isAvailable(right);
-			if (r_avail)
+			if (r_avail > 0)
 				break;
-			r_avail++;
+			right++;
 		}
 		if (r_avail > 0)
-		{
-			answer = r_avail + right-N;
-			answer = answer > right - N ? right - N : answer;
-		}
+			answer = answer > r_avail + right - N ? r_avail + right - N : answer;
 	}
 	else {
 		int left = N - 1;
-		int right = N + 1;
+		int right = N;
 		int l_avail = -1;
 		while (left >= 0)
-		{
+		{			
 			l_avail = isAvailable(left);
 			if (l_avail > 0)
 				break;
 			left--;
 		}
-		if (l_avail > 0) {
-			answer = l_avail + N - left;
-			answer = answer > 100 - N ? 100 - N : answer;
-		}
+		if (l_avail > 0) 
+			answer = l_avail + N - left;		
 		int r_avail = -1;
 		while (right < 100)
 		{
 			r_avail = isAvailable(right);
-			if (r_avail)
+			if (r_avail > 0)
 				break;
-			r_avail++;
+			right++;
 		}
-		if (r_avail > 0)
-		{
-			answer = r_avail + right - N;
-			answer = answer > right - N ? right - N : answer;
-		}
+		if (r_avail > 0)		
+			answer = answer > r_avail + right - N ? r_avail+right-N : answer;
+		answer = answer > 100 - N ? 100-N : answer;
 	}
+	cout << answer;
+	return 0;
 }

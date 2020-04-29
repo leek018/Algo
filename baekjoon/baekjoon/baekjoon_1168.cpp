@@ -1,8 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <queue>
 using namespace std;
-queue<int> q;
+vector<int> arr;
 vector<int> answer;
 int main()
 {
@@ -10,20 +9,16 @@ int main()
 	cin.tie(0);
 	int N, K; cin >> N >> K;	
 	for (int i = 1; i <= N; i++)
-		q.push(i);
-	int count = 0;
-	while (!q.empty())
+		arr.push_back(i);
+	int len = N;
+	int pos = 0;
+	for (int i = 0; i < N; i++)
 	{
-		int ret = q.front();
-		q.pop();
-		count++;
-		if (count == K)
-		{
-			count = 0;
-			answer.push_back(ret);
-		}
-		else
-			q.push(ret);
+		pos = (pos + K - 1)%len;
+		int target = arr[pos];
+		answer.push_back(target);
+		arr.erase(arr.begin() + pos);
+		len--;
 	}
 	cout << "<" << answer[0];
 	for (int i = 1; i < answer.size(); i++)

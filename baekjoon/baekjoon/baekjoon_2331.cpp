@@ -2,13 +2,13 @@
 #include <vector>
 using namespace std;
 
-int arr[6600];
-
+int arr[236197];
+vector<int> answer;
 int main()
 {
 	int A, P; cin >> A >> P;	
 	int start = A;
-	vector<int> answer;
+	
 	while (true)
 	{
 		if (arr[start] == 2)
@@ -19,9 +19,10 @@ int main()
 		while (start != 0)
 		{
 			int r = start % 10;
-			for (int i = 1; i < P; i++)
-				r *= r;
-			sum += r;
+			int temp = 1;
+			for (int i = 0; i < P; i++)
+				temp *= r;
+			sum += temp;
 			start /= 10;
 		}
 		start = sum;

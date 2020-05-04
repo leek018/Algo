@@ -8,7 +8,7 @@ int main()
 	int N, M; cin >> N >> M;
 	for (int i = 0; i < N; i++)	
 		cin >> arr[i];
-	int answer = M;
+	int answer = 0;
 	for (int i = 0; i < N - 2; i++)
 	{
 		for (int j = i + 1; j < N - 1; j++)

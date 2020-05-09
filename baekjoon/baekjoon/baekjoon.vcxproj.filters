@@ -642,5 +642,11 @@
     <ClCompile Include="baekjoon_7575.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="kakao_2020_05_09_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kakao_2020_05_09_02.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -648,5 +648,11 @@
     <ClCompile Include="kakao_2020_05_09_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="kakao_2020_05_09_03.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kakao_2020_05_09_05.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
